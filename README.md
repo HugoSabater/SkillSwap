@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SkillSwap 🔄
 
-## Getting Started
+SkillSwap is a barter economy platform for professionals. It allows developers, designers, and marketers to exchange services directly using time credits instead of money, fostering a circular economy of skills.
 
-First, run the development server:
+## 🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **🔐 Secure Auth & RLS:** Robust authentication with Supabase SSR and Row Level Security (RLS) policies to protect user data.
+- **💎 Skill Economy:** Users earn credits by offering services and spend them to get help.
+- **💬 Real-time Chat:** Instant messaging to coordinate swaps, powered by Supabase Realtime protocols.
+- **⭐ Reputation System:** Complete feedback loop with 5-star ratings and reviews after swap completion.
+- **🧠 Smart Dashboard:** "Strict Mode" filtering algorithm that ensures users always discover new connections, hiding previous interactions.
+- **🎨 Modern UI:** Built with Next.js 14, Tailwind CSS, and Shadcn/ui (Dark Mode) for a native-app feel.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework:** Next.js 14 (App Router & Server Actions)
+- **Database:** Supabase (PostgreSQL + Realtime)
+- **Styling:** Tailwind CSS + Shadcn/ui + Lucide Icons
+- **State Management:** URL State + Optimistic UI
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Getting Started
 
-## Learn More
+1. **Clone the repo:**
+   ```bash
+   git clone [https://github.com/HugoSabater/SkillSwap.git](https://github.com/HugoSabater/SkillSwap.git)
+   cd SkillSwap
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Set up Environment Variables: Create a .env.local file with your Supabase credentials:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=your_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Database Setup:
+   This project relies on a specific PostgreSQL schema.
+   Run the provided SQL scripts (located in /supabase/migrations or root) in your Supabase SQL Editor to create tables (profiles, swaps, messages, reviews) and apply RLS policies.
 
-## Deploy on Vercel
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+This project is licensed under the MIT License.
