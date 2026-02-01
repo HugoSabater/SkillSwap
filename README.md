@@ -1,9 +1,16 @@
 # SkillSwap 🔄
 
-[![Deploy with Vercel](https://vercel.com/button)](https://skill-swap-two-psi.vercel.app)
 > **Live Demo:** [https://skill-swap-two-psi.vercel.app](https://skill-swap-two-psi.vercel.app)
 
 SkillSwap is a barter economy platform for professionals. It allows developers, designers, and marketers to exchange services directly using time credits instead of money, fostering a circular economy of skills.
+
+## 🎥 Project Presentation
+
+Watch the deep-dive analysis of SkillSwap's architecture and features:
+
+[![SkillSwap Demo](https://img.youtube.com/vi/RqI4sG0DTpY/0.jpg)](https://www.youtube.com/watch?v=RqI4sG0DTpY)
+
+> *An AI-generated analysis of the project's technical architecture, security, and business logic.*
 
 ## 🚀 Key Features
 
@@ -40,14 +47,19 @@ SkillSwap is a barter economy platform for professionals. It allows developers, 
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
    ```
 
-4. Database Setup:
-   This project relies on a specific PostgreSQL schema.
-   Run the provided SQL scripts (located in /supabase/migrations or root) in your Supabase SQL Editor to create tables (profiles, swaps, messages, reviews) and apply RLS policies.
+4. Database Setup: This project relies on a specific PostgreSQL schema. Run the provided SQL scripts (located in /supabase/migrations or root) in your Supabase SQL Editor to create tables (profiles, swaps, messages, reviews) and apply RLS policies.
 
 5. Run the development server:
    ```bash
    npm run dev
    ```
 
+## 🔮 Future Roadmap
+Corporate Swapping (B2B): Scaling the model for companies to exchange blocks of expert hours (e.g., Cybersecurity for AI consulting) without financial bureaucracy.
+
+Mobile App: Native implementation using React Native.
+
+Smart Contracts: Exploring blockchain for decentralized credit verification.
+
 ## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
