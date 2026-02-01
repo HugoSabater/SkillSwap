@@ -1,7 +1,22 @@
+
 import Link from "next/link";
 import { ArrowRightLeft, FileText, Handshake, ShieldCheck } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+
+  // Fetch Real Stats (Parallel)
+  const [
+    { count: usersCount },
+    { count: swapsCount },
+    { count: skillsCount }
+  ] = await Promise.all([
+    supabase.from('profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('swaps').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+    supabase.from('skills').select('*', { count: 'exact', head: true })
+  ]);
+
   return (
     <div className="flex flex-col min-h-screen bg-black text-white selection:bg-blue-600">
 
@@ -49,20 +64,20 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Stats Grid */}
+        {/* Stats Grid - REAL DATA */}
         <section className="py-12 bg-zinc-900/50 border-y border-zinc-800">
           <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 flex flex-col items-center text-center">
-              <div className="text-4xl font-bold text-white mb-2">5,000+</div>
-              <div className="text-zinc-500 font-medium uppercase text-sm tracking-wide">Active Members</div>
+              <div className="text-4xl font-bold text-white mb-2">{usersCount || 0}</div>
+              <div className="text-zinc-500 font-medium uppercase text-sm tracking-wide">Active Pros</div>
             </div>
             <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 flex flex-col items-center text-center">
-              <div className="text-4xl font-bold text-blue-500 mb-2">12.4k</div>
+              <div className="text-4xl font-bold text-blue-500 mb-2">{swapsCount || 0}</div>
               <div className="text-zinc-500 font-medium uppercase text-sm tracking-wide">Swaps Completed</div>
             </div>
             <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 flex flex-col items-center text-center">
-              <div className="text-4xl font-bold text-green-500 mb-2">99%</div>
-              <div className="text-zinc-500 font-medium uppercase text-sm tracking-wide">Satisfaction Rate</div>
+              <div className="text-4xl font-bold text-green-500 mb-2">{skillsCount || 0}</div>
+              <div className="text-zinc-500 font-medium uppercase text-sm tracking-wide">Skills Available</div>
             </div>
           </div>
         </section>
