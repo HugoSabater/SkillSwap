@@ -1,5 +1,8 @@
 # SkillSwap 🔄
 
+[![Deploy with Vercel](https://vercel.com/button)](https://skill-swap-two-psi.vercel.app)
+> **Live Demo:** [https://skill-swap-two-psi.vercel.app](https://skill-swap-two-psi.vercel.app)
+
 SkillSwap is a barter economy platform for professionals. It allows developers, designers, and marketers to exchange services directly using time credits instead of money, fostering a circular economy of skills.
 
 ## 🚀 Key Features
@@ -22,7 +25,7 @@ SkillSwap is a barter economy platform for professionals. It allows developers, 
 
 1. **Clone the repo:**
    ```bash
-   git clone [https://github.com/HugoSabater/SkillSwap.git](https://github.com/HugoSabater/SkillSwap.git)
+   git clone https://github.com/HugoSabater/SkillSwap.git
    cd SkillSwap
    ```
 
@@ -47,4 +50,4 @@ SkillSwap is a barter economy platform for professionals. It allows developers, 
    ```
 
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
