@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/utils/supabase/server";
 import {
     ArrowRightLeft,
     Coins,
@@ -15,12 +15,23 @@ import SwapStack from "./swap-stack";
 import BottomNav from "@/components/bottom-nav";
 
 export default async function Dashboard() {
+    if (!isSupabaseConfigured()) {
+        redirect("/login");
+    }
+
     const supabase = await createClient();
 
-    // 1. Obtain current user
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+    let user = null;
+    try {
+        const authPromise = supabase.auth.getUser();
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Auth timeout')), 2500)
+        );
+        const res = await Promise.race([authPromise, timeoutPromise]);
+        user = res?.data?.user ?? null;
+    } catch {
+        user = null;
+    }
 
     if (!user) {
         redirect("/login");

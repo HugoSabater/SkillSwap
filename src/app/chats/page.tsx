@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,8 +9,22 @@ import { formatDistanceToNow } from "date-fns";
 import BottomNav from "@/components/bottom-nav";
 
 export default async function ChatsPage() {
+    if (!isSupabaseConfigured()) {
+        redirect("/login");
+    }
+
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let user = null;
+    try {
+        const authPromise = supabase.auth.getUser();
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Auth timeout')), 2500)
+        );
+        const res = await Promise.race([authPromise, timeoutPromise]);
+        user = res?.data?.user ?? null;
+    } catch {
+        user = null;
+    }
 
     if (!user) redirect("/login");
 

@@ -1,6 +1,15 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+function isConfigured(url: string, key: string): boolean {
+    return Boolean(
+        url &&
+        !url.includes('placeholder') &&
+        key &&
+        !key.includes('placeholder')
+    )
+}
+
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
         request,
@@ -32,31 +41,39 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    // IMPORTANT: Avoid writing any logic between createServerClient and
-    // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-    // issues with users being randomly logged out.
+    let user = null
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    if (isConfigured(url, key)) {
+        try {
+            const authPromise = supabase.auth.getUser()
+            const timeoutPromise = new Promise<{ data: { user: null }; error: Error }>((_, reject) =>
+                setTimeout(() => reject(new Error('Supabase auth timeout')), 2500)
+            )
 
-    if (
-        !user &&
-        !request.nextUrl.pathname.startsWith('/login') &&
-        !request.nextUrl.pathname.startsWith('/auth') &&
-        request.nextUrl.pathname !== '/'
-    ) {
-        // no user, potentially respond by redirecting the user to the login page
-        const url = request.nextUrl.clone()
-        url.pathname = '/login'
-        return NextResponse.redirect(url)
+            const result = await Promise.race([authPromise, timeoutPromise])
+            user = result?.data?.user ?? null
+        } catch (err) {
+            console.warn('[SkillSwap Middleware] Supabase auth timed out or failed, proceeding as guest:', err)
+            user = null
+        }
     }
 
-    // Optional: Redirect to dashboard if logged in and trying to access login
+    const isPublicRoute =
+        request.nextUrl.pathname === '/' ||
+        request.nextUrl.pathname.startsWith('/login') ||
+        request.nextUrl.pathname.startsWith('/signup') ||
+        request.nextUrl.pathname.startsWith('/auth')
+
+    if (!user && !isPublicRoute) {
+        const loginUrl = request.nextUrl.clone()
+        loginUrl.pathname = '/login'
+        return NextResponse.redirect(loginUrl)
+    }
+
     if (user && request.nextUrl.pathname === '/login') {
-        const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
-        return NextResponse.redirect(url)
+        const dashboardUrl = request.nextUrl.clone()
+        dashboardUrl.pathname = '/dashboard'
+        return NextResponse.redirect(dashboardUrl)
     }
 
     // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

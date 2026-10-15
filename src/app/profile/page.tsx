@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRightLeft, Compass, MessageCircle, User } from "lucide-react";
@@ -8,8 +8,22 @@ import BottomNav from "@/components/bottom-nav";
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
+    if (!isSupabaseConfigured()) {
+        redirect("/login");
+    }
+
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let user = null;
+    try {
+        const authPromise = supabase.auth.getUser();
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Auth timeout')), 2500)
+        );
+        const res = await Promise.race([authPromise, timeoutPromise]);
+        user = res?.data?.user ?? null;
+    } catch {
+        user = null;
+    }
 
     if (!user) redirect("/login");
 

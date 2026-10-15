@@ -1,21 +1,34 @@
 
 import Link from "next/link";
 import { ArrowRightLeft, FileText, Handshake, ShieldCheck } from "lucide-react";
-import { createClient } from "@/utils/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/utils/supabase/server";
 
 export default async function LandingPage() {
-  const supabase = await createClient();
+  let usersCount = 120;
+  let swapsCount = 45;
+  let skillsCount = 85;
 
-  // Fetch Real Stats (Parallel)
-  const [
-    { count: usersCount },
-    { count: swapsCount },
-    { count: skillsCount }
-  ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('swaps').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-    supabase.from('skills').select('*', { count: 'exact', head: true })
-  ]);
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const statsPromise = Promise.all([
+        supabase.from('profiles').select('*', { count: 'exact', head: true }),
+        supabase.from('swaps').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+        supabase.from('skills').select('*', { count: 'exact', head: true })
+      ]);
+
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Stats timeout')), 2500)
+      );
+
+      const [usersRes, swapsRes, skillsRes] = await Promise.race([statsPromise, timeoutPromise]);
+      if (usersRes?.count !== null && usersRes?.count !== undefined) usersCount = usersRes.count;
+      if (swapsRes?.count !== null && swapsRes?.count !== undefined) swapsCount = swapsRes.count;
+      if (skillsRes?.count !== null && skillsRes?.count !== undefined) skillsCount = skillsRes.count;
+    } catch (err) {
+      console.warn('[SkillSwap Landing] Supabase stats query failed or timed out, using fallback stats:', err);
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white selection:bg-blue-600">
